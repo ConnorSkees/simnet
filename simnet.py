@@ -142,6 +142,39 @@ class SIMNet:
         )
         return req.ok
 
+    def get_simbook_assignments(self, assignment_id: str) -> Dict[str, str]:
+        """
+        Args:
+            assignment_id: str Assignment ID matching \\d{7}
+
+        Yields:
+            dict[str, str] Information necessary to create request
+        """
+        simbook_assignment_headers = self.headers.copy()
+        simbook_assignment_headers.update({
+            "Referer": f"https://{self.school}.simnetonline.com/sp/"
+        })
+
+        req = self.session.get(
+            f"{self.base_url}/api/assignments/simbooks/{assignment_id}/details",
+            params={"lessonType": "0"},
+            headers=simbook_assignment_headers,
+        )
+
+        results = json.loads(req.text)["results"][0]
+        assignment_id = results["assignmentID"]
+        loid = results["loid"]
+        for task in results["tasks"]:
+            task_complete_id = task["taskCompleteID"]
+            page_slug = task["pageSlug"]
+            # url = f"/api/simbooks/{loid}/save/{assignment_id}/{task_complete_id}/{page_slug}"
+            yield ({
+                "loid": loid,
+                "assignment_id": assignment_id,
+                "task_complete_id": task_complete_id,
+                "page_slug": page_slug
+            })
+
 if __name__ == "__main__":
     with open("test_config.json", mode="r", encoding="utf-8") as config_file:
         CONFIG = json.load(config_file)
