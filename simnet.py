@@ -136,12 +136,14 @@ class SIMNet:
         return req.ok
 
 if __name__ == "__main__":
-    with open("config.json", mode="r", encoding="utf-8") as config_file:
-        config = json.load(config_file)
-        username = config["username"]
-        password = config["password"]
-        school = config["school"]
-        api_key = config["apiKey"]
+    with open("test_config.json", mode="r", encoding="utf-8") as config_file:
+        CONFIG = json.load(config_file)
+        USERNAME = CONFIG["username"]
+        PASSWORD = CONFIG["password"]
+        SCHOOL = CONFIG["school"]
+        API_KEY = CONFIG["apiKey"]
+    S = SIMNet(SCHOOL, API_KEY)
+    S.login(USERNAME, PASSWORD)
 
 
 
