@@ -105,7 +105,7 @@ class SIMNet:
                      t=5&
                      redirect_uri=https%3A%2F%{school}.simnetonline.com%2Fsp%2F%23bo%2F4100478
                      #ex16_sk_01_01
-            task_complete_id: int Task specific id. Matches \d{9}
+            task_complete_id: int Task specific id. Matches \\d{9}
                               Successful completion does not depend on this value.
 
         Returns:
