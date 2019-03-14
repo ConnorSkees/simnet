@@ -6,6 +6,7 @@
 from pprint import pprint
 import json
 import random
+from urllib.parse import urlparse
 
 import requests
 
@@ -72,29 +73,30 @@ class SIMNet:
         Complete a single simbook assignment
 
         Args:
-            assignment_number: float Assignment number (e.g. 1.8, 2.4)
-            assignment_type: str Type of assignment. Options include
-                                                        excel 2016 ('ex16'),
+            url: str Assignment url. Should look something like this:
+                http://{school}.simnetonline.com/sb/?l=1744&a=4100478&t=5&redirect_uri=https%3A%2F%2Fhacc.simnetonline.com%2Fsp%2F%23bo%2F4100478#ex16_sk_01_01
         """
         assignment_headers = self.headers.copy()
         assignment_headers.update({
-            "Referer": f"http://{self.school}.simnetonline.com/sb/?l=1753&a=4100480&t=5&redirect_uri=https%3A%2F%2F{self.school}.simnetonline.com%2Fsp%2F%23bo%2F4100480",
+            "Referer": url,
         })
         assignment_data = {
             "lessonType": "SIMbookLesson",
             "isComplete": True,
             "timeSpent": random.randint(30, 230),
         }
-        # ex16_sk_01_08_01
-        # excel 2016 skills 1.8 _01
-        assignment = f"{assignment_type}"
-        # url = f"/api/simbooks/{1753}/save/{4100480}/{362745216}/{}"
-        #
-        # req = self.session.get(
-        #     f"{self.base_url}{url}",
-        #     data=assignment_data,
-        #     headers=assignment_headers,
-        # )
+        parsed_url = urlparse(url)
+
+        # both `a` and `l` identify workbook chapters
+        # `a` is used to identify more than the SIMbook
+        # `a` has a length of 7 integers and `l` has a length of 4
+        l, a, t, redirect_uri = parsed_url.query.split("&")
+        assignment = parsed_url.fragment
+
+
+        # url = f"/api/simbooks/{1753}/save/{4100480}/{362745210}/{assignment}"
+        url = f"/api/simbooks/{l.replace('l=', '')}/save/{a.replace('a=', '')}/{362745216}/{assignment}"
+        print(url)
 
 if __name__ == "__main__":
     with open("config.json", mode="r", encoding="utf-8") as config_file:
