@@ -11,7 +11,6 @@ students can apply learning to course assignments and career opportunities.
 https://www.mheducation.com/highered/simnet.html
 """
 
-from pprint import pprint
 import json
 import random
 from urllib.parse import urlparse
