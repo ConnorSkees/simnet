@@ -10,8 +10,6 @@ from urllib.parse import urlparse
 
 import requests
 
-# GET /api/simbooks/1753/save/4100480/362745223/ex16_sk_01_15_01?lessonType=SIMbookLesson&isComplete=true&timeSpent=11
-# GET /api/simbooks/1753/save/4100480/362745216/ex16_sk_01_08_01?lessonType=SIMbookLesson&isComplete=true&timeSpent=33
 
 class LoginError(Exception):
     """Failed to login using credentials provided"""
@@ -69,6 +67,7 @@ class SIMNet:
                 f"Response: {req.text}\n"
             )
 
+    def complete_simbook_assignment(self, url: str):
         """
         Complete a single simbook assignment
 
@@ -94,7 +93,7 @@ class SIMNet:
         assignment = parsed_url.fragment
 
 
-        # url = f"/api/simbooks/{1753}/save/{4100480}/{362745210}/{assignment}"
+        # url = f"/api/simbooks/{l}/save/{a}/{362745210}/{assignment}"
         url = f"/api/simbooks/{l.replace('l=', '')}/save/{a.replace('a=', '')}/{362745216}/{assignment}"
         print(url)
 
