@@ -67,7 +67,7 @@ class SIMNet:
                 f"Response: {req.text}\n"
             )
 
-    def complete_simbook_assignment(self, url: str, assignment_id: int = 362745216):
+    def complete_simbook_assignment(self, url: str, assignment_id: int = 362745216) -> bool:
         """
         Complete a single simbook assignment
 
@@ -109,6 +109,8 @@ class SIMNet:
             params=assignment_data,
             headers=assignment_headers,
         )
+        return req.ok
+
 if __name__ == "__main__":
     with open("config.json", mode="r", encoding="utf-8") as config_file:
         config = json.load(config_file)
