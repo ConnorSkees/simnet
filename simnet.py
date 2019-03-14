@@ -101,6 +101,9 @@ class SIMNet:
                      #ex16_sk_01_01
             assignment_id: int Assignment specific id. Length of 9 characters.
                                Successful completion does not depend on this value.
+
+        Returns:
+            bool Whether or not the assignment was successfully completed
         """
         assignment_headers = self.headers.copy()
         assignment_headers.update({
