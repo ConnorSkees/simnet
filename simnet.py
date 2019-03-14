@@ -67,13 +67,15 @@ class SIMNet:
                 f"Response: {req.text}\n"
             )
 
-    def complete_simbook_assignment(self, url: str):
+    def complete_simbook_assignment(self, url: str, assignment_id: int = 362745216):
         """
         Complete a single simbook assignment
 
         Args:
             url: str Assignment url. Should look something like this:
                 http://{school}.simnetonline.com/sb/?l=1744&a=4100478&t=5&redirect_uri=https%3A%2F%2Fhacc.simnetonline.com%2Fsp%2F%23bo%2F4100478#ex16_sk_01_01
+            assignment_id: int Assignment specific id. Length of 9 characters.
+                               Successful completion does not depend on this value.
         """
         assignment_headers = self.headers.copy()
         assignment_headers.update({
@@ -94,7 +96,7 @@ class SIMNet:
 
 
         # url = f"/api/simbooks/{l}/save/{a}/{362745210}/{assignment}"
-        url = f"/api/simbooks/{l.replace('l=', '')}/save/{a.replace('a=', '')}/{362745216}/{assignment}"
+        url = f"/api/simbooks/{l.replace('l=', '')}/save/{a.replace('a=', '')}/{assignment_id}/{assignment}"
         print(url)
 
 if __name__ == "__main__":
