@@ -142,6 +142,32 @@ class SIMNet:
         )
         return req.ok
 
+    def complete_simbook_assignment_from_dict(self, assignment_dict: Dict[str, str]):
+        loid = assignment_dict["loid"]
+        assignment_id = assignment_dict["assignment_id"]
+        task_complete_id = assignment_dict["task_complete_id"]
+        page_slug = assignment_dict["page_slug"]
+
+        assignment_headers = self.headers.copy()
+        assignment_headers.update({
+            "Referer": f"http://{self.school}.simnetonline.com/sb/?l={loid}&a={assignment_id}&t=5&redirect_uri=https%3A%2F%2F{self.school}.simnetonline.com%2Fsp%2F%23bo%2F{assignment_id}",
+        })
+
+        assignment_data = {
+            "lessonType": "SIMbookLesson",
+            "isComplete": True,
+            "timeSpent": random.randint(30, 230),
+        }
+
+        url = f"/api/simbooks/{loid}/save/{assignment_id}/{task_complete_id}/{page_slug}"
+
+        req = self.session.get(
+            f"{self.base_url}{url}",
+            params=assignment_data,
+            headers=assignment_headers,
+        )
+        return req.ok
+
     def get_simbook_assignments(self, assignment_id: str) -> Dict[str, str]:
         """
         Args:
