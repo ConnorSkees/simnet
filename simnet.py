@@ -21,7 +21,11 @@ import requests
 class LoginError(Exception):
     """Failed to login using credentials provided"""
 
+
 class SIMNet:
+    """
+    Base class for making requests to SIMnet API
+    """
     def __init__(self, school: str, api_key: str) -> None:
         """
         Args:
