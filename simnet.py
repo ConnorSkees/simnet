@@ -45,6 +45,19 @@ class SIMNet:
         self.session = requests.Session()
 
     def login(self, username: str, password: str) -> None:
+        """
+        Login to SIMnet
+
+        Args:
+            username: str SIMnet username
+            password: str SIMnet password
+
+        Raises:
+            LoginError if login request is anything other than 200
+
+        Returns:
+            none
+        """
         login_headers = self.headers.copy()
         login_headers.update({
             "Accept": "application/json, text/javascript, */*; q=0.01",
