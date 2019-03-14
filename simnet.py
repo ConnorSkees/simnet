@@ -109,11 +109,13 @@ class SIMNet:
         assignment_headers.update({
             "Referer": url,
         })
+
         assignment_data = {
             "lessonType": "SIMbookLesson",
             "isComplete": True,
             "timeSpent": random.randint(30, 230),
         }
+
         parsed_url = urlparse(url)
 
         # both `a` and `l` identify workbook chapters
@@ -125,7 +127,6 @@ class SIMNet:
 
         # url = f"/api/simbooks/{l}/save/{a}/{362745210}/{assignment}"
         url = f"/api/simbooks/{l.replace('l=', '')}/save/{a.replace('a=', '')}/{assignment_id}/{assignment}"
-        print(url)
 
         req = self.session.get(
             f"{self.base_url}{url}",
