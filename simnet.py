@@ -73,7 +73,12 @@ class SIMNet:
 
         Args:
             url: str Assignment url. Should look something like this:
-                http://{school}.simnetonline.com/sb/?l=1744&a=4100478&t=5&redirect_uri=https%3A%2F%2Fhacc.simnetonline.com%2Fsp%2F%23bo%2F4100478#ex16_sk_01_01
+                     http://{school}.simnetonline.com/sb/?
+                     l=1744&
+                     a=4100478&
+                     t=5&
+                     redirect_uri=https%3A%2F%{school}.simnetonline.com%2Fsp%2F%23bo%2F4100478
+                     #ex16_sk_01_01
             assignment_id: int Assignment specific id. Length of 9 characters.
                                Successful completion does not depend on this value.
         """
