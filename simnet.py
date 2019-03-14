@@ -13,6 +13,7 @@ https://www.mheducation.com/highered/simnet.html
 
 import json
 import random
+from typing import Dict, Generator
 from urllib.parse import urlparse
 
 import requests
@@ -93,9 +94,13 @@ class SIMNet:
             )
         self.logged_in = True
 
-    def complete_simbook_assignment_from_url(self, url: str, task_complete_id: int = 362745216) -> bool:
+    def complete_simbook_assignment_from_url(
+            self,
+            url: str,
+            task_complete_id: int = 362745216
+        ) -> bool:
         """
-        Complete a single simbook assignment
+        Complete a single simbook assignment from url given
 
         Args:
             url: str Assignment url. Should look something like this:
@@ -168,7 +173,10 @@ class SIMNet:
         )
         return req.ok
 
-    def get_simbook_assignments(self, assignment_id: str) -> Dict[str, str]:
+    def get_simbook_assignments(
+            self,
+            assignment_id: str
+        ) -> Generator[Dict[str, str], None, None]:
         """
         Args:
             assignment_id: str Assignment ID matching \\d{7}
