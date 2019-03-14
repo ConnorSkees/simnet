@@ -87,7 +87,7 @@ class SIMNet:
                 f"Response: {req.text}\n"
             )
 
-    def complete_simbook_assignment(self, url: str, assignment_id: int = 362745216) -> bool:
+    def complete_simbook_assignment(self, url: str, task_complete_id: int = 362745216) -> bool:
         """
         Complete a single simbook assignment
 
@@ -99,8 +99,8 @@ class SIMNet:
                      t=5&
                      redirect_uri=https%3A%2F%{school}.simnetonline.com%2Fsp%2F%23bo%2F4100478
                      #ex16_sk_01_01
-            assignment_id: int Assignment specific id. Length of 9 characters.
-                               Successful completion does not depend on this value.
+            task_complete_id: int Task specific id. Length of 9 characters.
+                              Successful completion does not depend on this value.
 
         Returns:
             bool Whether or not the assignment was successfully completed
@@ -118,15 +118,16 @@ class SIMNet:
 
         parsed_url = urlparse(url)
 
-        # both `a` and `l` identify workbook chapters
-        # `a` is used to identify more than the SIMbook
-        # `a` has a length of 7 integers and `l` has a length of 4
-        l, a, t, redirect_uri = parsed_url.query.split("&")
-        assignment = parsed_url.fragment
+        # both `assignment_id` and `loid` identify workbook chapters
+        # though, I am not totally sure of the difference
+        # `assignment_id` has a length of 7 integers and `loid` has a length of 4
+        loid, assignment_id, _, _ = parsed_url.query.split("&")
+        page_slug = parsed_url.fragment
 
+        loid = loid.replace('l=', '')
+        assignment_id = assignment_id.replace('a=', '')
 
-        # url = f"/api/simbooks/{l}/save/{a}/{362745210}/{assignment}"
-        url = f"/api/simbooks/{l.replace('l=', '')}/save/{a.replace('a=', '')}/{assignment_id}/{assignment}"
+        url = f"/api/simbooks/{loid}/save/{assignment_id}/{task_complete_id}/{page_slug}"
 
         req = self.session.get(
             f"{self.base_url}{url}",
