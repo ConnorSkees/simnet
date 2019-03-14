@@ -99,6 +99,11 @@ class SIMNet:
         url = f"/api/simbooks/{l.replace('l=', '')}/save/{a.replace('a=', '')}/{assignment_id}/{assignment}"
         print(url)
 
+        req = self.session.get(
+            f"{self.base_url}{url}",
+            params=assignment_data,
+            headers=assignment_headers,
+        )
 if __name__ == "__main__":
     with open("config.json", mode="r", encoding="utf-8") as config_file:
         config = json.load(config_file)
