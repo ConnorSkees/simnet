@@ -12,6 +12,9 @@ import requests
 # GET /api/simbooks/1753/save/4100480/362745223/ex16_sk_01_15_01?lessonType=SIMbookLesson&isComplete=true&timeSpent=11
 # GET /api/simbooks/1753/save/4100480/362745216/ex16_sk_01_08_01?lessonType=SIMbookLesson&isComplete=true&timeSpent=33
 
+class LoginError(Exception):
+    """Failed to login using credentials provided"""
+
 class SIMNet:
     def __init__(self, school: str, api_key: str) -> None:
         """
@@ -54,9 +57,17 @@ class SIMNet:
             json=login_data,
             headers=login_headers,
         )
-        print(req.text)
 
-    def complete_simbook_assignment(self, assignment_number: float, assignment_type: str = "ex"):
+        if not req.ok:
+            raise LoginError(
+                "\n\n"
+                f"HTTP Response: {req}\n"
+                f"Reason: {req.reason}\n"
+                f"Username: {username}\n"
+                f"Password: {password}\n"
+                f"Response: {req.text}\n"
+            )
+
         """
         Complete a single simbook assignment
 
