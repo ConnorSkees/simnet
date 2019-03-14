@@ -1,6 +1,14 @@
 #!/usr/bin/env python
 """
+Manipulate SIMnet API endpoints to complete assignments through the command line
 
+SIMnet is an easy-to-use online training and assessment solution for Microsoft
+Office. It provides students with life-long access and unlimited practice on
+Microsoft Word, Excel, Access and PowerPoint in addition to file management,
+and operating systems content. With effective training modules as part ofSIMnet,
+students can apply learning to course assignments and career opportunities.
+
+https://www.mheducation.com/highered/simnet.html
 """
 
 from pprint import pprint
