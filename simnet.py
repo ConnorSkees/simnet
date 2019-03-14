@@ -45,7 +45,7 @@ class SIMNet:
             "X-Requested-With": "XMLHttpRequest",
             "Connection": "close",
         }
-        
+
         self.logged_in = False
         self.session = requests.Session()
 
@@ -93,7 +93,7 @@ class SIMNet:
             )
         self.logged_in = True
 
-    def complete_simbook_assignment(self, url: str, task_complete_id: int = 362745216) -> bool:
+    def complete_simbook_assignment_from_url(self, url: str, task_complete_id: int = 362745216) -> bool:
         """
         Complete a single simbook assignment
 
