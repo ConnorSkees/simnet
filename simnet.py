@@ -310,6 +310,14 @@ class SIMNet:
             f"{self.base_url}/api/simpathexams/{loid}/start/{assignment_id}/1"
         )
 
+        for question in question_dicts:
+            self.complete_simpath_question(**question)
+
+        # end exam
+        self.session.get(
+            f"{self.base_url}/api/simpathexams/{loid}/end/{assignment_id}/1?seconds={seconds_remaining}"
+        )
+
 
     @login_required
     @simpath_started_required
