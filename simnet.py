@@ -19,6 +19,10 @@ from urllib.parse import quote_plus, urlencode, urlparse
 import requests
 
 
+class SIMPathNotStartedError(Exception):
+    """A SIMpath exam has not begun, so questions cannot be answered yet"""
+
+
 class LoginError(Exception):
     """An error related to logging in occurred"""
 
@@ -56,6 +60,7 @@ class SIMNet:
         }
 
         self.logged_in = False
+        self.simpath_started = False
         self.session = requests.Session()
 
     def login(self, username: str, password: str) -> None:
@@ -108,6 +113,13 @@ class SIMNet:
                 raise NotLoggedInError("You are not logged in.")
             func(self, *args, **kwargs)
         return _login_required
+
+    def simpath_started_required(func):
+        def _simpath_started_required(self, *args, **kwargs):
+            if not self.logged_in:
+                raise SIMPathNotStartedError("You have not started a SIMpath exam.")
+            func(self, *args, **kwargs)
+        return _simpath_started_required
 
     @login_required
     def complete_simbook_assignment_from_url(
@@ -293,6 +305,8 @@ class SIMNet:
         )
 
 
+    @login_required
+    @simpath_started_required
     def complete_simpath_question(
             self,
             *,
