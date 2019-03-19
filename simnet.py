@@ -284,6 +284,7 @@ class SIMNet:
         )
 
         j = json.loads(req.text)
+        seconds_remaining = 600_000
         assignment_id = j["assignmentID"]
         loid = j["loid"]
         content_version = j["contentVersion"]
@@ -291,6 +292,8 @@ class SIMNet:
             question_id = question["id"]
             readable_answer = question["hint"]
             attempt = question["attempts"] + 1
+            seconds_spent = random.randint(23, 200)
+            seconds_remaining -= seconds_spent
             question_dicts.append({
                 "assignment_id": assignment_id,
                 "loid": loid,
@@ -298,6 +301,8 @@ class SIMNet:
                 "readable_answer": readable_answer,
                 "attempt": attempt,
                 "content_version": content_version,
+                "seconds_spent": seconds_spent,
+                "seconds_remaining": seconds_remaining
             })
 
         # start exam
