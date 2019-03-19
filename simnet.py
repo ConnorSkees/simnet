@@ -108,6 +108,7 @@ class SIMNet:
         self.logged_in = True
 
     def login_required(func):
+        """Require that the user has already logged in before continuting"""
         def _login_required(self, *args, **kwargs):
             if not self.logged_in:
                 raise NotLoggedInError("You are not logged in.")
@@ -115,6 +116,7 @@ class SIMNet:
         return _login_required
 
     def simpath_started_required(func):
+        """Require that a SIMpath exam has started before continuting"""
         def _simpath_started_required(self, *args, **kwargs):
             if not self.logged_in:
                 raise SIMPathNotStartedError("You have not started a SIMpath exam.")
