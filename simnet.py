@@ -20,10 +20,16 @@ import requests
 
 
 class LoginError(Exception):
+    """An error related to logging in occurred"""
+
+
+class CouldNotLoginError(LoginError):
     """Failed to login using credentials provided"""
+
 
 class NotLoggedInError(LoginError):
     """User is not currently logged in"""
+
 
 class SIMNet:
     """
@@ -61,7 +67,7 @@ class SIMNet:
             password: str SIMnet password
 
         Raises:
-            LoginError if login request is anything other than 200
+            CouldNotLoginError if login request is anything other than 200
 
         Returns:
             none
