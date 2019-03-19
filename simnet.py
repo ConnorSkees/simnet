@@ -97,7 +97,7 @@ class SIMNet:
         )
 
         if not req.ok:
-            raise LoginError(
+            raise CouldNotLoginError(
                 "\n\n"
                 f"HTTP Response: {req}\n"
                 f"Reason: {req.reason}\n"
