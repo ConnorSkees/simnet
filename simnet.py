@@ -245,6 +245,54 @@ class SIMNet:
             })
 
     @login_required
+    def simpath_init(self, assignment_id: int) -> Dict[str, Union[str, int]]:
+        """
+        Initialize a SIMpath exam
+
+        assignment_id: int Length of 7. Probably starts with `4`
+                           Can be found in url
+        """
+        simpath_headers = self.headers.copy()
+        simpath_headers.update({
+            "Accept": "application/json, text/javascript, */*; q=0.01",
+            "Referer": f"http://{self.school}.simnetonline.com/sp/?redirect_uri=https%3A%2F%2F{self.school}.simnetonline.com%2Fsp%2F%23pa%2F{assignment_id}",
+        })
+
+        # get loid
+        # loid: int Length of 6. Probably starts with `1`
+        loid = json.loads(self.session.get(
+            f"{self.base_url}/api/assignments/simpaths/{assignment_id}/details?lessonType=4"
+        ).text)["loid"]
+
+        req = self.session.get(
+            f"{self.base_url}/api/simpathexams/{loid}/init/{assignment_id}/1"
+        )
+
+        question_dicts = []
+
+        j = json.loads(req.text)
+        assignment_id = j["assignmentID"]
+        loid = j["loid"]
+        content_version = j["contentVersion"]
+        for question in j["questions"]:
+            question_id = question["id"]
+            readable_answer = question["hint"]
+            attempt = question["attempts"] + 1
+            question_dicts.append({
+                "assignment_id": assignment_id,
+                "loid": loid,
+                "question_id": question_id,
+                "readable_answer": readable_answer,
+                "attempt": attempt,
+                "content_version": content_version,
+            })
+
+        # start exam
+        self.session.get(
+            f"{self.base_url}/api/simpathexams/{loid}/start/{assignment_id}/1"
+        )
+
+
     def complete_simpath_question(
             self,
             *,
