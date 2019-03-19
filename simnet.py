@@ -259,7 +259,7 @@ class SIMNet:
             })
 
     @login_required
-    def complete_simpath_exam(self, assignment_id: int) -> Dict[str, Union[str, int]]:
+    def complete_simpath_exam(self, assignment_id: int) -> None:
         """
         Complete a SIMpath exam
 
