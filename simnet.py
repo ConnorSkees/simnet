@@ -238,6 +238,61 @@ class SIMNet:
                 "is_completed": is_completed
             })
 
+    @login_required
+    def complete_simpath_question(
+            self,
+            *,
+            loid: int,
+            assignment_id: int,
+            question_id: str,
+            seconds_spent: int,
+            seconds_remaining: int,
+            readable_answer: str,
+            content_version: str = "V3",
+            attempt: int = 1,
+        ):
+        """
+        Complete a single question during a SIMpath exam
+            Keyword arguments are forced because the integers are too similar
+
+        loid: int Length of 6. Probably starts with `1`
+        assignment_id: int Length of 7. Probably starts with `4`
+        question_id: str Question specific id. (e.g. ex16_sk_02_01_01_p_01)
+        seconds_spent: int Amount of time spent working on the question
+        content_version: str SIMnet specific versioning system.
+                             Will likely be "V3"
+        attempt: int Current number of attempts + 1
+        readable_answer: str List of steps taken. For example, if the question
+                             is 'Copy the selected text,' this parameter would
+                             be <span class="username">You</span> clicked
+                             <b>Ctrl + C</b>.
+        """
+        simpath_headers = self.headers.copy()
+        simpath_headers.update({
+            "Accept": "application/json, text/javascript, */*; q=0.01",
+            "Referer": f"http://{self.school}.simnetonline.com/sp/?redirect_uri=https%3A%2F%2F{self.school}.simnetonline.com%2Fsp%2F%23pa%2F{assignment_id}",
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+        })
+        simpath_data = {
+            "contentVersion": content_version,
+            "questionID": question_id, #ex16_sk_02_01_01_p_01
+            "attempt": attempt,
+            "answer": {},
+            "readableAnswer": quote_plus(readable_answer),
+            "secondsRemaining": min(seconds_remaining, 600_000-seconds_spent),
+            "secondsSpent": seconds_spent,
+            "isCorrect": True,
+            "lessonType": 4
+        }
+
+        simpath_headers.update({"Content-Length": len(urlencode(simpath_data))})
+
+        self.session.post(
+            f"{self.base_url}/api/simpathexams/{loid}/saveanswer/{assignment_id}/1",
+            headers=simpath_headers,
+            params=simpath_data
+        )
+
 if __name__ == "__main__":
     with open("test_config.json", mode="r", encoding="utf-8") as config_file:
         CONFIG = json.load(config_file)
