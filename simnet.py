@@ -13,8 +13,8 @@ https://www.mheducation.com/highered/simnet.html
 
 import json
 import random
-from typing import Dict, Generator
-from urllib.parse import urlparse
+from typing import Dict, Generator, Union
+from urllib.parse import quote_plus, urlencode, urlparse
 
 import requests
 
