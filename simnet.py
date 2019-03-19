@@ -227,12 +227,15 @@ class SIMNet:
         for task in results["tasks"]:
             task_complete_id = task["taskCompleteID"]
             page_slug = task["pageSlug"]
+            is_completed = task["timesCompleted"] > 0
+
             # url = f"/api/simbooks/{loid}/save/{assignment_id}/{task_complete_id}/{page_slug}"
             yield ({
                 "loid": loid,
                 "assignment_id": assignment_id,
                 "task_complete_id": task_complete_id,
-                "page_slug": page_slug
+                "page_slug": page_slug,
+                "is_completed": is_completed
             })
 
 if __name__ == "__main__":
