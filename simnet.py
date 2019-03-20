@@ -386,6 +386,128 @@ class SIMNet:
             params=simpath_data
         )
 
+    @login_required
+    def complete_exam(self, assignment_id: int) -> None:
+        """
+        Complete a SIMpath exam
+
+        assignment_id: int Length of 7. Probably starts with `4`
+                           Can be found in url
+        """
+        simpath_headers = self.headers.copy()
+        simpath_headers.update({
+            "Accept": "application/json, text/javascript, */*; q=0.01",
+            "Referer": f"http://{self.school}.simnetonline.com/sp/?redirect_uri=https%3A%2F%2F{self.school}.simnetonline.com%2Fsp%2F%23pa%2F{assignment_id}",
+        })
+
+        # loid: int Length of 6. Probably starts with `1`
+        loid = json.loads(self.session.get(
+            f"{self.base_url}/api/assignments/exams/{assignment_id}/details"
+        ).text)["loid"]
+
+        question_dicts: List[Dict[str, Union[int, str]]] = []
+
+        req = self.session.get(
+            f"{self.base_url}/api/simnetexams/{loid}/init/{assignment_id}/1"
+        )
+
+        j = json.loads(req.text)
+        seconds_remaining = 600_000
+        assignment_id = j["assignmentID"]
+        loid = j["loid"]
+        content_version = j["contentVersion"]
+        for question in j["questions"]:
+            question_id = question["id"]
+            readable_answer = question["hint"]
+            attempt = question["attempts"] + 1
+            seconds_spent = random.randint(23, 200)
+            seconds_remaining -= seconds_spent
+            question_dicts.append({
+                "assignment_id": assignment_id,
+                "loid": loid,
+                "question_id": question_id,
+                "readable_answer": readable_answer,
+                "attempt": attempt,
+                "content_version": content_version,
+                "seconds_spent": seconds_spent,
+                "seconds_remaining": seconds_remaining
+            })
+
+        # start exam
+        self.session.get(
+            f"{self.base_url}/api/simnetexams/{loid}/start/{assignment_id}/1"
+        )
+
+        self.is_in_exam = True
+
+        for question in question_dicts:
+            time.sleep(question["seconds_spent"])
+            self.complete_simpath_question(**question)
+
+        # end exam
+        self.session.get(
+            f"{self.base_url}/api/simnetexams/{loid}/end/{assignment_id}/1?seconds={seconds_remaining}"
+        )
+
+        self.is_in_exam = False
+
+    @login_required
+    @exam_started_required
+    def complete_exam_question(
+            self,
+            *,
+            loid: int,
+            assignment_id: int,
+            question_id: str,
+            seconds_spent: int,
+            seconds_remaining: int,
+            readable_answer: str,
+            content_version: str = "V3",
+            attempt: int = 1,
+        ) -> None:
+        """
+        Complete a single question during a SIMpath exam
+            Keyword arguments are forced because the integers are too similar
+
+        loid: int Length of 6. Probably starts with `1`
+        assignment_id: int Length of 7. Probably starts with `4`
+        question_id: str Question specific id. (e.g. ex16_sk_02_01_01_p_01)
+        seconds_spent: int Amount of time spent working on the question
+        content_version: str SIMnet specific versioning system.
+                             Will likely be "V3"
+        attempt: int Current number of attempts + 1
+        readable_answer: str List of steps taken. For example, if the question
+                             is 'Copy the selected text,' this parameter would
+                             be <span class="username">You</span> clicked
+                             <b>Ctrl + C</b>.
+        """
+        exam_headers = self.headers.copy()
+        exam_headers.update({
+            "Accept": "application/json, text/javascript, */*; q=0.01",
+            "Referer": f"http://{self.school}.simnetonline.com/sp/?redirect_uri=https%3A%2F%2F{self.school}.simnetonline.com%2Fsp%2F%23se%2F{assignment_id}%2Fresult%2F1",
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+        })
+
+        exam_data = {
+            "contentVersion": content_version,
+            "questionID": question_id, #ex16_sk_02_01_01_p_01
+            "attempt": attempt,
+            "answer": {},
+            "readableAnswer": quote_plus(readable_answer),
+            "secondsRemaining": min(seconds_remaining, 600_000-seconds_spent),
+            "secondsSpent": seconds_spent,
+            "isCorrect": True,
+        }
+
+        exam_headers.update({"Content-Length": str(len(urlencode(exam_data)))})
+
+        self.session.post(
+            f"/api/simnetexams/{loid}/saveanswer/{assignment_id}/1",
+            headers=exam_headers,
+            params=exam_data
+        )
+
+
 if __name__ == "__main__":
     with open("test_config.json", mode="r", encoding="utf-8") as config_file:
         CONFIG = json.load(config_file)
