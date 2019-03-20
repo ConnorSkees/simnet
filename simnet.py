@@ -112,16 +112,24 @@ class SIMNet:
         def _login_required(self, *args, **kwargs):
             if not self.logged_in:
                 raise NotLoggedInError("You are not logged in.")
-            func(self, *args, **kwargs)
+            return func(self, *args, **kwargs)
         return _login_required
 
     def simpath_started_required(func):
         """Require that a SIMpath exam has started before continuting"""
         def _simpath_started_required(self, *args, **kwargs):
-            if not self.logged_in:
+            if not self.is_in_simpath:
                 raise SIMPathNotStartedError("You have not started a SIMpath exam.")
-            func(self, *args, **kwargs)
+            return func(self, *args, **kwargs)
         return _simpath_started_required
+
+    def exam_started_required(func):
+        """Require that a SIMnet exam has started before continuting"""
+        def _exam_started_required(self, *args, **kwargs):
+            if not self.is_in_exam:
+                raise SIMNetExamNotStartedError("You have not started a SIMpath exam.")
+            return func(self, *args, **kwargs)
+        return _exam_started_required
 
     @login_required
     def complete_simbook_assignment_from_url(
@@ -310,6 +318,8 @@ class SIMNet:
             f"{self.base_url}/api/simpathexams/{loid}/start/{assignment_id}/1"
         )
 
+        self.is_in_simpath = True
+
         for question in question_dicts:
             self.complete_simpath_question(**question)
 
@@ -318,6 +328,7 @@ class SIMNet:
             f"{self.base_url}/api/simpathexams/{loid}/end/{assignment_id}/1?seconds={seconds_remaining}"
         )
 
+        self.is_in_simpath = False
 
     @login_required
     @simpath_started_required
