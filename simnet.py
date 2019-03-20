@@ -9,6 +9,11 @@ and operating systems content. With effective training modules as part ofSIMnet,
 students can apply learning to course assignments and career opportunities.
 
 https://www.mheducation.com/highered/simnet.html
+
+
+What's the difference between a 'SIMpath exam' and a 'SIMnet exam'?
+    SIMnet exams are the real deal and are often just called 'exam.'
+    SIMpath exams are the pretest/lesson/posttest and
 """
 
 import json
@@ -21,6 +26,10 @@ import requests
 
 class SIMPathNotStartedError(Exception):
     """A SIMpath exam has not begun, so questions cannot be answered yet"""
+
+
+class SIMNetExamNotStartedError(Exception):
+    """A SIMnet exam has not begun, so questions cannot be answered yet"""
 
 
 class LoginError(Exception):
@@ -60,7 +69,8 @@ class SIMNet:
         }
 
         self.logged_in = False
-        self.simpath_started = False
+        self.is_in_simpath = False
+        self.is_in_exam = False
         self.session = requests.Session()
 
     def login(self, username: str, password: str) -> None:
@@ -389,7 +399,7 @@ class SIMNet:
     @login_required
     def complete_exam(self, assignment_id: int) -> None:
         """
-        Complete a SIMpath exam
+        Complete a SIMnet exam
 
         assignment_id: int Length of 7. Probably starts with `4`
                            Can be found in url
@@ -466,7 +476,7 @@ class SIMNet:
             attempt: int = 1,
         ) -> None:
         """
-        Complete a single question during a SIMpath exam
+        Complete a single question during a SIMnet exam
             Keyword arguments are forced because the integers are too similar
 
         loid: int Length of 6. Probably starts with `1`
