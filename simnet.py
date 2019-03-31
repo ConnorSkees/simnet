@@ -342,7 +342,7 @@ class SIMNet:
 
     @login_required
     @simpath_started_required
-    def complete_simpath_question(
+    def _complete_simpath_question(
             self,
             *,
             loid: int,
@@ -452,7 +452,7 @@ class SIMNet:
 
         for question in question_dicts:
             time.sleep(question["seconds_spent"])
-            self.complete_simpath_question(**question)
+            self._complete_exam_question(**question)
 
         # end exam
         self.session.get(
@@ -463,7 +463,7 @@ class SIMNet:
 
     @login_required
     @exam_started_required
-    def complete_exam_question(
+    def _complete_exam_question(
             self,
             *,
             loid: int,
