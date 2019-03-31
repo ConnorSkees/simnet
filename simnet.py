@@ -224,7 +224,7 @@ class SIMNet:
         assignment_data = {
             "lessonType": "SIMbookLesson",
             "isComplete": True,
-            "timeSpent": random.randint(30, 230),
+            "timeSpent": random.randint(30, 232),
         }
 
         url = f"/api/simbooks/{loid}/save/{assignment_id}/{task_complete_id}/{page_slug}"
@@ -310,7 +310,7 @@ class SIMNet:
             question_id = question["id"]
             readable_answer = question["hint"]
             attempt = question["attempts"] + 1
-            seconds_spent = random.randint(23, 200)
+            seconds_spent = random.randint(23, 203)
             seconds_remaining -= seconds_spent
             question_dicts.append({
                 "assignment_id": assignment_id,
@@ -331,7 +331,8 @@ class SIMNet:
         self.is_in_simpath = True
 
         for question in question_dicts:
-            self.complete_simpath_question(**question)
+            time.sleep(question["seconds_spent"])
+            self._complete_simpath_question(**question)
 
         # end exam
         self.session.get(
@@ -451,6 +452,7 @@ class SIMNet:
         self.is_in_exam = True
 
         for question in question_dicts:
+            print(f"Sleeping for {question['seconds_spent']}")
             time.sleep(question["seconds_spent"])
             self._complete_exam_question(**question)
 
