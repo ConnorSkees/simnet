@@ -568,6 +568,10 @@ def handle_args(args):
     valid_types_dict[assignment_type](assignment_id)
 
 
+if __name__ == "__main__":
+    handle_args(sys.argv)
+
+
 
 
 
