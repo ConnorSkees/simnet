@@ -18,6 +18,8 @@ What's the difference between a 'SIMpath exam' and a 'SIMnet exam'?
 
 import json
 import random
+import sys
+import time
 from typing import Dict, Generator, List, Union
 from urllib.parse import quote_plus, urlencode, urlparse
 
@@ -30,6 +32,17 @@ class SIMPathNotStartedError(Exception):
 
 class SIMNetExamNotStartedError(Exception):
     """A SIMnet exam has not begun, so questions cannot be answered yet"""
+
+
+class CLIError(Exception):
+    """An error occurred with the arguments passed through the command line"""
+
+
+class InvalidAssignmentType(CLIError):
+    """
+    An unrecognized assignment type was passed. Valid assignments are simbook,
+    simpath, and exam.
+    """
 
 
 class LoginError(Exception):
@@ -519,8 +532,25 @@ class SIMNet:
             params=exam_data
         )
 
+def handle_args(args):
+    if len(args) > 3:
+        raise TooManyArguments("You passed too many arguments :/")
+    elif len(args) < 3:
+        print(
+            "\n"
+            "simnet.py: a module for manipulating SIMnet\n"
+            "Argument structure is: simnet.py [assignment_type] [assignment_id]\n"
+            "Valid assignment types: simbook, simpath, exam\n"
+            "Assignment id is a 7 digit long integer\n"
+            "EX: simnet.py simbook 4100000"
+        )
+        quit()
+    assignment_type = args[1]
+    assignment_id = args[2]
+    valid_types = ['simbook', 'simpath', 'exam']
+    if assignment_type not in valid_types:
+        raise InvalidAssignmentType(f"{assignment_type}")
 
-if __name__ == "__main__":
     with open("test_config.json", mode="r", encoding="utf-8") as config_file:
         CONFIG = json.load(config_file)
         USERNAME = CONFIG["username"]
@@ -529,6 +559,13 @@ if __name__ == "__main__":
         API_KEY = CONFIG["apiKey"]
     S = SIMNet(SCHOOL, API_KEY)
     S.login(USERNAME, PASSWORD)
+
+    valid_types_dict = {
+        'simbook': S.complete_simbook,
+        'simpath': S.complete_simpath_exam,
+        'exam':    S.complete_exam,
+    }
+    valid_types_dict[assignment_type](assignment_id)
 
 
 
