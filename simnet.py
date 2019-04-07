@@ -240,13 +240,25 @@ class SIMNet:
             "timeSpent": random.randint(30, 232),
         }
 
-        url = f"/api/simbooks/{loid}/save/{assignment_id}/{task_complete_id}/{page_slug}"
+        # init book
+        # self.session.get(
+        #     f"{self.base_url}/api/simbooks/{loid}/init/{assignment_id}?lessonType=5"
+        # )
 
+        url = f"/api/simbooks/{loid}/save/{assignment_id}/{task_complete_id}/{page_slug}_01"
+                # {'loid': 1754, 'assignment_id': 4100481, 'task_complete_id': 363571892, 'page_slug': 'ex16_sk_02_02', 'is_completed': False}
+                # /api/simbooks/1754/save/4100481/363571891/ex16_sk_02_01_01?lessonType=SIMbookLesson&isComplete=true&timeSpent=30
         req = self.session.get(
             f"{self.base_url}{url}",
             params=assignment_data,
             headers=assignment_headers,
         )
+        print(assignment_dict, req.ok, req.reason, "\n\n", req.text)
+
+        # exit book
+        # self.session.get(
+        #     f"{self.base_url}/api/simbooks/{loid}/exit/{assignment_id}?lessonType=5&_={int(time.time()*1000)}"
+        # )
         return req.ok
 
     @login_required
@@ -261,6 +273,7 @@ class SIMNet:
         Yields:
             dict[str, str] Information necessary to create request
         """
+        print("Getting assignments")
         simbook_assignment_headers = self.headers.copy()
         simbook_assignment_headers.update({
             "Referer": f"https://{self.school}.simnetonline.com/sp/"
@@ -277,6 +290,9 @@ class SIMNet:
         loid = results["loid"]
         for task in results["tasks"]:
             task_complete_id = task["taskCompleteID"]
+            # page slug key
+            # _01 let_me_try
+            # _01g guide_me
             page_slug = task["pageSlug"]
             is_completed = task["timesCompleted"] > 0
 
