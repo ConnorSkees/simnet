@@ -13,7 +13,7 @@ https://www.mheducation.com/highered/simnet.html
 
 What's the difference between a 'SIMpath exam' and a 'SIMnet exam'?
     SIMnet exams are the real deal and are often just called 'exam.'
-    SIMpath exams are the pretest/lesson/posttest and
+    SIMpath exams are the pretest/lesson/posttest and are often just called 'SIMpath'
 """
 
 import json
