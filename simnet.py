@@ -306,6 +306,15 @@ class SIMNet:
             })
 
     @login_required
+    def complete_simbook(self, assignment_id: int) -> None:
+        for assignment in self.get_simbook_assignments(assignment_id):
+            if assignment["is_completed"]:
+                continue
+            time.sleep(assignment["timeSpent"])
+            self.complete_simbook_assignment_from_dict(assignment)
+            print(assignment)
+
+    @login_required
     def complete_simpath_exam(self, assignment_id: int) -> None:
         """
         Complete a SIMpath exam
