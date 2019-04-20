@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 """
-Manipulate SIMnet API endpoints to complete assignments through the command line
+Manipulate SIMnet API endpoints to complete assignments
+
+**Intended as proof of concept exploit to be responsibly reported**
 
 SIMnet is an easy-to-use online training and assessment solution for Microsoft
 Office. It provides students with life-long access and unlimited practice on
